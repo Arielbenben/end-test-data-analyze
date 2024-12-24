@@ -1,5 +1,5 @@
-from app.db.database import terrorist_attacks_collection
-from app.db.repository.queries import get_sum_events_by_group_at_all_region_query, \
+from app.db.mongo_db.database import terrorist_attacks_collection
+from app.db.mongo_db.repository.queries import get_sum_events_by_group_at_all_region_query, \
     get_attack_type_sort_by_most_deadly_query, \
     get_avg_deadly_grade_by_region_query, get_five_groups_with_the_biggest_casualties_query, \
     get_attacks_and_targets_query, sum_events_by_year_query, sum_events_by_month_query, \
@@ -23,11 +23,11 @@ def get_attack_type_sort_by_most_deadly(num: int = 0):
     return list(res)
 
 
-def get_avg_deadly_grade_by_region(limit: int = 0):
+def get_avg_deadly_grade_by_region(area: str):
     pipeline_query = get_avg_deadly_grade_by_region_query
 
-    if limit > 0:
-        pipeline_query.append({"$limit": limit})
+    if area == 'area':
+        pipeline_query.append({"$limit": 5})
 
     result = terrorist_attacks_collection.aggregate(pipeline_query)
 
@@ -78,13 +78,13 @@ def get_sum_events_by_year_at_all_regions():
     return list(results)
 
 
-def get_sum_events_by_group_at_region_or_all_regions(region: str = None):
+def get_sum_events_by_group_at_region_or_all_regions(region: str):
     match_stage = {
         "location.region": {"$ne": None},
         "terrorist_group.name": {"$ne": None}
     }
 
-    if region:
+    if region != 'all':
         match_stage["location.region"] = region
 
     pipeline_query = get_sum_events_by_group_at_all_region_query

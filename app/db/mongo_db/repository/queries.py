@@ -49,6 +49,9 @@ get_sum_events_by_group_at_all_region_query = [
         "$replaceRoot": {
             "newRoot": "$grouped_by_region"
         }
+    },
+    {
+        '$limit': 5
     }
 ]
 
@@ -124,6 +127,12 @@ get_avg_deadly_grade_by_region_query = [
 ]
 
 get_five_groups_with_the_biggest_casualties_query = [
+    {
+      '$match': {
+          'terrorist_group.name': {'$ne': None},
+          'casualties.deadly_grade': {'$ne': None}
+      }
+    },
     {
         "$group": {
             "_id": "$terrorist_group.name",
