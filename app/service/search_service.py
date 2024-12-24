@@ -21,8 +21,7 @@ def search_keyword_in_all_indexes_and_return_map(keywords: str, limit: int):
                 'terror_attack',
                 event_data
             )
-
-    return map_object
+    return map_object._repr_html_()
 
 
 def search_keywords_in_current_news_and_return_map(keywords: str, limit: int):
@@ -42,7 +41,7 @@ def search_keywords_in_current_news_and_return_map(keywords: str, limit: int):
                 event
             )
 
-    return map_object
+    return map_object._repr_html_()
 
 
 def search_keywords_in_historic_news_and_return_map(keywords: str, limit: int):
@@ -62,14 +61,10 @@ def search_keywords_in_historic_news_and_return_map(keywords: str, limit: int):
                 event
             )
 
-    return map_object
+    return map_object._repr_html_()
 
 
-def search_keyword_in_all_indexes_by_dates_and_return_map(dates_and_keywords: dict, limit: int):
-    keywords = dates_and_keywords['keywords']
-    start_date = dates_and_keywords['start_date']
-    end_date = dates_and_keywords['end_date']
-
+def search_keyword_in_all_indexes_by_dates_and_return_map(limit: int, keywords: str, start_date: str, end_date: str):
     search_results = search_keyword_in_all_indexes_between_dates(keywords, start_date, end_date, limit)
     map_object = create_map_object()
 
@@ -86,11 +81,11 @@ def search_keyword_in_all_indexes_by_dates_and_return_map(dates_and_keywords: di
                 event
             )
 
-    return map_object
+    return map_object._repr_html_()
 
 dictu = {
     'keywords': 'israel',
     'start_date': '1970-01-01',
     'end_date': '2024-01-01'
 }
-print(search_keyword_in_all_indexes_by_dates_and_return_map(dictu, 10))
+# print(search_keyword_in_all_indexes_by_dates_and_return_map(dictu, 10))

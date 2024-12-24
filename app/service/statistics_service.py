@@ -98,11 +98,13 @@ def get_number_of_unique_group_by_country_or_region_at_map(region_or_country: st
 
     unique_groups = get_number_of_unique_group_by_country_or_region(region_or_country)
     map_object = create_map_object()
-
-    for area in unique_groups:
-        coordinates = get_lot_and_lan_for_location(area['_id'])
-        map_object = add_a_marker_to_map(map_object, coordinates['lat'], coordinates['lng'], area['_id'],
-                                         area['unique_group_names'])
+    try:
+        for area in unique_groups:
+            coordinates = get_lot_and_lan_for_location(area['_id'])
+            map_object = add_a_marker_to_map(map_object, coordinates['lat'], coordinates['lng'], area['_id'],
+                                             area['unique_group_names'])
+    except Exception as e:
+        str(e)
     return map_object._repr_html_()
 
 

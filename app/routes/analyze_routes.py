@@ -19,10 +19,9 @@ def get_attack_type_sort_by_most_deadly_route(num: int):
         return jsonify({'Error': str(e)}), 500
 
 
-@analyze_attacks_blueprint.route('/get_avg_deadly_grade_by_region_at_map/<string:area>', methods=['POST'])
+@analyze_attacks_blueprint.route('/get_avg_deadly_grade_by_region_at_map/<string:area>', methods=['GET'])
 def get_avg_deadly_grade_by_region_at_map_route(area: str):
     try:
-        print(area)
         result = get_avg_deadly_grade_by_region_at_map(area)
         return jsonify({"html" : result}), 200
     except Exception as e:

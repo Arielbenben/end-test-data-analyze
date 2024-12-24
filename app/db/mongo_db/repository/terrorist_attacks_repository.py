@@ -111,7 +111,6 @@ def get_number_of_unique_group_by_country_or_region(region_or_country: str):
 
     return list(results)
 
-
 def get_groups_with_shared_targets(region_or_country: str):
     match_stage = {
         "terrorist_group.name": {"$ne": None},
