@@ -11,7 +11,9 @@ get_sum_events_by_group_at_all_region_query = [
                 "region": "$location.region",
                 "terrorist_group": "$terrorist_group.name"
             },
-            "sum_events": {"$sum": 1}
+            "sum_events": {"$sum": 1},
+            "latitude": {"$first": "$location.latitude"},
+            "longitude": {"$first": "$location.longitude"}
         }
     },
     {
@@ -19,7 +21,9 @@ get_sum_events_by_group_at_all_region_query = [
             "_id": 0,
             "region": "$_id.region",
             "terrorist_group": "$_id.terrorist_group",
-            "sum_events": 1
+            "sum_events": 1,
+            "latitude": 1,
+            "longitude": 1
         }
     },
     {
@@ -31,7 +35,14 @@ get_sum_events_by_group_at_all_region_query = [
                 {
                     "$group": {
                         "_id": "$region",
-                        "top_groups": {"$push": {"terrorist_group": "$terrorist_group", "sum_events": "$sum_events"}}
+                        "top_groups": {
+                            "$push": {
+                                "terrorist_group": "$terrorist_group",
+                                "sum_events": "$sum_events",
+                                "latitude": "$latitude",
+                                "longitude": "$longitude"
+                            }
+                        }
                     }
                 },
                 {
@@ -106,19 +117,26 @@ get_attack_type_sort_by_most_deadly_query = [
 get_avg_deadly_grade_by_region_query = [
     {
         "$match": {
-            "casualties.deadly_grade": {"$ne": None}
+            "casualties.deadly_grade": {"$ne": None},
+            "location.region": {"$ne": None},
+            "location.latitude": {"$ne": None},
+            "location.longitude": {"$ne": None}
         }
     },
     {
         "$group": {
             "_id": "$location.region",
-            "average_deadly_grade": {"$avg": "$casualties.deadly_grade"}
+            "average_deadly_grade": {"$avg": "$casualties.deadly_grade"},
+            "latitude": {"$first": "$location.latitude"},
+            "longitude": {"$first": "$location.longitude"}
         }
     },
     {
         "$project": {
             "_id": 1,
-            "average_deadly_grade": {"$round": ["$average_deadly_grade", 2]}
+            "average_deadly_grade": {"$round": ["$average_deadly_grade", 2]},
+            "latitude": 1,
+            "longitude": 1
         }
     },
     {
@@ -209,7 +227,9 @@ get_sum_events_by_year_at_all_regions_query = [
     {
         "$match": {
             "location.region": {"$ne": None},
-            "terrorist_group.name": {'$ne': None}
+            "terrorist_group.name": {'$ne': None},
+            "location.latitude": {'$ne': None},
+            "location.longitude": {'$ne': None}
         }
     },
     {
@@ -218,7 +238,9 @@ get_sum_events_by_year_at_all_regions_query = [
                 "region": "$location.region",
                 "year": "$date.year"
             },
-            "sum_events": {"$sum": 1}
+            "sum_events": {"$sum": 1},
+            "latitude": {"$first": "$location.latitude"},
+            "longitude": {"$first": "$location.longitude"}
         }
     },
     {
@@ -231,7 +253,9 @@ get_sum_events_by_year_at_all_regions_query = [
         "$group": {
             "_id": "$_id.region",
             "first_year_sum_events": {"$first": {"year": "$_id.year", "sum_events": "$sum_events"}},
-            "last_year_sum_events": {"$last": {"year": "$_id.year", "sum_events": "$sum_events"}}
+            "last_year_sum_events": {"$last": {"year": "$_id.year", "sum_events": "$sum_events"}},
+            "latitude": {"$first": "$latitude"},
+            "longitude": {"$first": "$longitude"}
         }
     },
     {
@@ -239,7 +263,9 @@ get_sum_events_by_year_at_all_regions_query = [
             "_id": 0,
             "region": "$_id",
             "first_year_sum_events": 1,
-            "last_year_sum_events": 1
+            "last_year_sum_events": 1,
+            "latitude": 1,
+            "longitude": 1
         }
     }
 ]
@@ -252,15 +278,18 @@ get_number_of_unique_group_query = [
     {
         "$group": {
             "_id": None,
-            "unique_groups": {"$addToSet": "$terrorist_group.name"}
+            "unique_groups": {"$addToSet": "$terrorist_group.name"},
+            "latitude": {"$first": "$location.latitude"},
+            "longitude": {"$first": "$location.longitude"}
         }
     },
     {
         "$project": {
             "_id": 1,
             "unique_count": {"$size": "$unique_groups"},
-            "unique_group_names": "$unique_groups"
-
+            "unique_group_names": "$unique_groups",
+            "latitude": 1,
+            "longitude": 1
         }
     },
     {
@@ -346,7 +375,9 @@ get_groups_with_shared_attack_strategies_query = [
         "attack_type": "$attack.attack_type",
         "terrorist_group": "$terrorist_group.name"
       },
-      "count": { "$sum": 1 }
+      "count": { "$sum": 1 },
+      "latitude": {"$first": "$location.latitude"},
+      "longitude": {"$first": "$location.longitude"}
     }
   },
   {
@@ -356,7 +387,9 @@ get_groups_with_shared_attack_strategies_query = [
         "attack_type": "$_id.attack_type"
       },
       "unique_groups_count": { "$sum": 1 },
-      "total_groups": { "$push": "$_id.terrorist_group" }
+      "total_groups": { "$push": "$_id.terrorist_group" },
+      "latitude": {"$first": "$latitude"},
+      "longitude": {"$first": "$longitude"}
     }
   },
   {
@@ -367,7 +400,9 @@ get_groups_with_shared_attack_strategies_query = [
       "_id": "$_id.region_or_country",
       "attack_type": { "$first": "$_id.attack_type" },
       "unique_groups_count": { "$first": "$unique_groups_count" },
-      "total_groups": { "$first": "$total_groups" }
+      "total_groups": { "$first": "$total_groups" },
+      "latitude": {"$first": "$latitude"},
+      "longitude": {"$first": "$longitude"}
     }
   },
   {
@@ -376,7 +411,9 @@ get_groups_with_shared_attack_strategies_query = [
       "region_or_country": "$_id",
       "attack_type": 1,
       "unique_groups_count": 1,
-      "total_groups": 1
+      "total_groups": 1,
+      "latitude": 1,
+      "longitude": 1
     }
   }
 ]

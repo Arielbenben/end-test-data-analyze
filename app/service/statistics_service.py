@@ -27,7 +27,7 @@ def calculate_yearly_attack_percentage_change_by_region_at_map(area: str):
     map_object = create_map_object()
 
     areas = [
-        {**area, 'coordinates': get_lot_and_lan_for_location(area.get('region')),
+        {**area,
          'percentage_change': calculate_percent_change(area)}
         for area in events_by_year
     ]
@@ -36,7 +36,7 @@ def calculate_yearly_attack_percentage_change_by_region_at_map(area: str):
         areas = sort_top_percentage_change(areas)
 
     for area in areas:
-        map_object = add_a_marker_to_map(map_object, area['coordinates']['lat'], area['coordinates']['lng'],
+        map_object = add_a_marker_to_map(map_object, area['latitude'], area['longitude'],
                                          area['region'], f'{area["percentage_change"]}%')
     return map_object._repr_html_()
 
@@ -46,9 +46,8 @@ def get_avg_deadly_grade_by_region_at_map(area: str):
     map_object = create_map_object()
 
     for area in avg_deadly:
-        coordinates = get_lot_and_lan_for_location(area['_id'])
         color = get_color_to_casualties_grade(area['average_deadly_grade'])
-        map_object = add_a_marker_to_map(map_object, coordinates['lat'], coordinates['lng'], area['_id'],
+        map_object = add_a_marker_to_map(map_object, area['latitude'], area['longitude'], area['_id'],
                                          area['average_deadly_grade'], color)
 
     return map_object._repr_html_()
@@ -59,9 +58,8 @@ def get_sum_events_by_group_at_region_or_all_regions_at_map(region: str):
     map_object = create_map_object()
 
     for area in sum_events:
-        coordinates = get_lot_and_lan_for_location(area['_id'])
-        map_object = add_a_marker_to_map(map_object, coordinates['lat'], coordinates['lng'], area['_id'],
-                                         [area['terrorist_group'] for area in area['top_groups']])
+        map_object = add_a_marker_to_map(map_object, area['top_groups'][0]['latitude'], area['top_groups'][0]['longitude'],
+                                         area['_id'], [area['terrorist_group'] for area in area['top_groups']])
     return map_object._repr_html_()
 
 
@@ -76,17 +74,12 @@ def get_groups_with_shared_targets_at_map(region_or_country: str):
         len_area = len(area['shared_targets'])
 
         for i in range(len_area):
-            color = None
-            if i == 0:
-                color = 'red'
-
             map_object = add_a_marker_to_map(
                 map_object,
                 area['shared_targets'][i]['coordinates']['lat'],
                 area['shared_targets'][i]['coordinates']['lng'],
-                area['region'],
-                area['shared_targets'][i]['terrorist_groups'],
-                color
+                str(len(area['shared_targets'][i]['terrorist_groups'])),
+                area['shared_targets'][i]['terrorist_groups']
             )
 
     return map_object._repr_html_()
@@ -98,13 +91,10 @@ def get_number_of_unique_group_by_country_or_region_at_map(region_or_country: st
 
     unique_groups = get_number_of_unique_group_by_country_or_region(region_or_country)
     map_object = create_map_object()
-    try:
-        for area in unique_groups:
-            coordinates = get_lot_and_lan_for_location(area['_id'])
-            map_object = add_a_marker_to_map(map_object, coordinates['lat'], coordinates['lng'], area['_id'],
-                                             area['unique_group_names'])
-    except Exception as e:
-        str(e)
+
+    for area in unique_groups:
+        map_object = add_a_marker_to_map(map_object, area['latitude'], area['longitude'], area['unique_count'],
+                                         area['unique_group_names'])
     return map_object._repr_html_()
 
 
@@ -116,8 +106,8 @@ def get_groups_with_shared_attack_strategies_at_map(region_or_country: str):
     map_object = create_map_object()
 
     for area in groups:
-        coordinates = get_lot_and_lan_for_location(area['region_or_country'])
-        map_object = add_a_marker_to_map(map_object, coordinates['lat'], coordinates['lng'], area['unique_groups_count'],
+        map_object = add_a_marker_to_map(map_object, area['latitude'], area['longitude'], area['attack_type'],
                                          area['total_groups'])
+
     return map_object._repr_html_()
 
