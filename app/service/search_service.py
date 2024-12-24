@@ -83,9 +83,4 @@ def search_keyword_in_all_indexes_by_dates_and_return_map(limit: int, keywords: 
 
     return map_object._repr_html_()
 
-dictu = {
-    'keywords': 'israel',
-    'start_date': '1970-01-01',
-    'end_date': '2024-01-01'
-}
-# print(search_keyword_in_all_indexes_by_dates_and_return_map(dictu, 10))
+

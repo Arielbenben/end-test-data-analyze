@@ -1,4 +1,3 @@
-from app.api.location_api import get_lot_and_lan_for_location
 from app.db.mongo_db.repository.terrorist_attacks_repository import get_sum_events_by_year_at_all_regions, \
     get_attacks_and_targets, \
     get_avg_deadly_grade_by_region, get_sum_events_by_group_at_region_or_all_regions, get_groups_with_shared_targets, \
@@ -7,6 +6,7 @@ import pandas as pd
 from app.service.map_service import create_map_object, add_a_marker_to_map
 from app.utils.statistics_utils import get_color_to_casualties_grade, sort_top_percentage_change, \
     calculate_percent_change
+from toolz import map
 
 
 def get_attack_target_correlation():
@@ -70,17 +70,15 @@ def get_groups_with_shared_targets_at_map(region_or_country: str):
     groups = get_groups_with_shared_targets(region_or_country)
     map_object = create_map_object()
 
-    for area in groups:
-        len_area = len(area['shared_targets'])
-
-        for i in range(len_area):
-            map_object = add_a_marker_to_map(
-                map_object,
-                area['shared_targets'][i]['coordinates']['lat'],
-                area['shared_targets'][i]['coordinates']['lng'],
-                str(len(area['shared_targets'][i]['terrorist_groups'])),
-                area['shared_targets'][i]['terrorist_groups']
-            )
+    list(map(
+        lambda area: list(map
+            (lambda target: add_a_marker_to_map(
+        map_object,
+        target['coordinates']['lat'],
+        target['coordinates']['lng'],
+        str(len(target['terrorist_groups'])),
+        target['terrorist_groups']
+    ), area['shared_targets'])), groups))
 
     return map_object._repr_html_()
 
