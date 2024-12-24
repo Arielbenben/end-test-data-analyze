@@ -7,7 +7,7 @@ from app.service.search_service import search_keyword_in_all_indexes_and_return_
 search_keywords_blueprint = Blueprint('search_keywords', __name__)
 
 
-@search_keywords_blueprint.route('/search/keywords/<int:limit>', methods=['GET'])
+@search_keywords_blueprint.route('/search/keywords/<int:limit>', methods=['POST'])
 def search_keywords_in_all_database_route(limit: int):
     try:
         keywords = request.get_json()
@@ -17,7 +17,7 @@ def search_keywords_in_all_database_route(limit: int):
         return jsonify({'Error': str(e)}), 500
 
 
-@search_keywords_blueprint.route('/search/news/<int:limit>', methods=['GET'])
+@search_keywords_blueprint.route('/search/news/<int:limit>', methods=['POST'])
 def search_keywords_in_current_news_route(limit: int):
     try:
         keywords = request.get_json()
@@ -27,7 +27,7 @@ def search_keywords_in_current_news_route(limit: int):
         return jsonify({'Error': str(e)}), 500
 
 
-@search_keywords_blueprint.route('/search/historic/<int:limit>', methods=['GET'])
+@search_keywords_blueprint.route('/search/historic/<int:limit>', methods=['POST'])
 def search_keywords_in_historic_news_route(limit: int):
     try:
         keywords = request.get_json()
@@ -37,7 +37,7 @@ def search_keywords_in_historic_news_route(limit: int):
         return jsonify({'Error': str(e)}), 500
 
 
-@search_keywords_blueprint.route('/search/combined/<int:limit>', methods=['GET'])
+@search_keywords_blueprint.route('/search/combined/<int:limit>', methods=['POST'])
 def search_keywords_sort_dates_in_all_database_route(limit: int):
     try:
         dates_and_keywords = request.get_json()

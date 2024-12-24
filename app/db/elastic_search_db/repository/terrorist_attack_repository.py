@@ -77,4 +77,3 @@ def search_keyword_in_all_indexes_between_dates(keyword: str, start_date: str, e
     response = elastic_client.search(index="_all", body=query)
 
     return [hit['_source'] for hit in response['hits']['hits']]
-
